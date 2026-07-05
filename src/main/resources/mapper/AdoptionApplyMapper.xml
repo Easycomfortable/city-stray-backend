@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.citystray.mapper.AdoptionApplyMapper">
+
+    <!-- 查询领养申请列表（关联申请人和动物信息） -->
+    <select id="selectApplyList" resultType="map">
+        SELECT ad.*,
+               u.nickname as applicant_nickname, u.phone as applicant_phone,
+               a.name as animal_name, a.breed as animal_breed, a.photos as animal_photos
+        FROM adoption_apply ad
+        LEFT JOIN user u ON ad.user_id = u.id
+        LEFT JOIN animal a ON ad.animal_id = a.id
+        WHERE ad.deleted = 0
+        <if test="params.stage != null and params.stage != ''">
+            AND ad.stage = #{params.stage}
+        </if>
+        <if test="params.realName != null and params.realName != ''">
+            AND ad.real_name LIKE CONCAT('%', #{params.realName}, '%')
+        </if>
+        ORDER BY ad.create_time DESC
+    </select>
+
+</mapper>
