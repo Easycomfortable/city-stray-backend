@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.citystray.mapper.AnimalMapper">
+
+    <!-- 查询动物列表（含医疗记录数和领养申请数） -->
+    <select id="selectAnimalList" resultType="map">
+        SELECT a.*,
+               (SELECT COUNT(*) FROM medical_record m WHERE m.animal_id = a.id AND m.deleted = 0) as medical_count,
+               (SELECT COUNT(*) FROM adoption_apply ad WHERE ad.animal_id = a.id AND ad.deleted = 0) as adoption_count
+        FROM animal a
+        WHERE a.deleted = 0
+        <if test="params.name != null and params.name != ''">
+            AND a.name LIKE CONCAT('%', #{params.name}, '%')
+        </if>
+        <if test="params.breed != null and params.breed != ''">
+            AND a.breed = #{params.breed}
+        </if>
+        <if test="params.healthStatus != null and params.healthStatus != ''">
+            AND a.health_status = #{params.healthStatus}
+        </if>
+        <if test="params.isNeutered != null">
+            AND a.is_neutered = #{params.isNeutered}
+        </if>
+        ORDER BY a.create_time DESC
+    </select>
+
+</mapper>
