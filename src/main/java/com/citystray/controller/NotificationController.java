@@ -1,5 +1,6 @@
 package com.citystray.controller;
 
+import com.citystray.annotation.RequireRole;
 import com.citystray.common.PageResult;
 import com.citystray.common.Result;
 import com.citystray.entity.SysNotification;
@@ -71,6 +72,7 @@ public class NotificationController {
      */
     @ApiOperation("管理员发送通知")
     @PostMapping("/send")
+    @RequireRole({"admin"})
     public Result<?> send(@RequestBody Map<String, Object> body) {
         Long targetUserId = Long.valueOf(body.get("userId").toString());
         String title = (String) body.get("title");

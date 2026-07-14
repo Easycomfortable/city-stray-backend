@@ -1,5 +1,6 @@
 package com.citystray.controller;
 
+import com.citystray.annotation.RequireRole;
 import com.citystray.common.PageResult;
 import com.citystray.common.Result;
 import com.citystray.entity.*;
@@ -36,6 +37,7 @@ public class ContentController {
 
     @ApiOperation("保存Banner")
     @PostMapping("/banner/save")
+    @RequireRole({"admin"})
     public Result<?> saveBanner(@RequestBody ContentBanner banner) {
         contentService.saveBanner(banner);
         return Result.success();
@@ -43,6 +45,7 @@ public class ContentController {
 
     @ApiOperation("删除Banner")
     @DeleteMapping("/banner/{id}")
+    @RequireRole({"admin"})
     public Result<?> deleteBanner(@PathVariable Long id) {
         contentService.deleteBanner(id);
         return Result.success();
@@ -50,6 +53,7 @@ public class ContentController {
 
     @ApiOperation("更新Banner排序")
     @PutMapping("/banner/sort")
+    @RequireRole({"admin"})
     public Result<?> updateBannerSort(@RequestBody List<Map<String, Object>> sortList) {
         contentService.updateBannerSort(sortList);
         return Result.success();
@@ -68,6 +72,7 @@ public class ContentController {
 
     @ApiOperation("审核故事")
     @PostMapping("/story/{id}/review")
+    @RequireRole({"admin"})
     public Result<?> reviewStory(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String status = body.get("status");
         contentService.reviewStory(id, status);
@@ -110,6 +115,7 @@ public class ContentController {
 
     @ApiOperation("保存公告")
     @PostMapping("/notice/save")
+    @RequireRole({"admin"})
     public Result<?> saveNotice(@RequestBody ContentNotice notice) {
         contentService.saveNotice(notice);
         return Result.success();
@@ -117,6 +123,7 @@ public class ContentController {
 
     @ApiOperation("删除公告")
     @DeleteMapping("/notice/{id}")
+    @RequireRole({"admin"})
     public Result<?> deleteNotice(@PathVariable Long id) {
         contentService.deleteNotice(id);
         return Result.success();
@@ -135,6 +142,7 @@ public class ContentController {
 
     @ApiOperation("处理举报")
     @PostMapping("/report/{id}/handle")
+    @RequireRole({"admin"})
     public Result<?> handleReport(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String status = body.get("status");
         contentService.handleReport(id, status);
@@ -162,6 +170,7 @@ public class ContentController {
 
     @ApiOperation("保存文章")
     @PostMapping("/article/save")
+    @RequireRole({"admin"})
     public Result<?> saveArticle(@RequestBody ContentArticle article) {
         contentService.saveArticle(article);
         return Result.success();
@@ -169,6 +178,7 @@ public class ContentController {
 
     @ApiOperation("删除文章")
     @DeleteMapping("/article/{id}")
+    @RequireRole({"admin"})
     public Result<?> deleteArticle(@PathVariable Long id) {
         contentService.deleteArticle(id);
         return Result.success();
@@ -176,6 +186,7 @@ public class ContentController {
 
     @ApiOperation("切换文章发布状态")
     @PostMapping("/article/{id}/toggle")
+    @RequireRole({"admin"})
     public Result<?> toggleArticleStatus(@PathVariable Long id) {
         contentService.toggleArticleStatus(id);
         return Result.success();

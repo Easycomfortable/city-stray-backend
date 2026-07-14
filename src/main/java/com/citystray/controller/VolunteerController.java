@@ -1,5 +1,6 @@
 package com.citystray.controller;
 
+import com.citystray.annotation.RequireRole;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.citystray.common.PageResult;
@@ -46,6 +47,7 @@ public class VolunteerController {
      */
     @ApiOperation("分页查询志愿者列表")
     @GetMapping("/list")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<PageResult<Map<String, Object>>> list(
             @ApiParam("关键词") @RequestParam(required = false) String keyword,
             @ApiParam("认证状态(PENDING/APPROVED/REJECTED)") @RequestParam(required = false) String certifyStatus,
@@ -82,6 +84,7 @@ public class VolunteerController {
      */
     @ApiOperation("审核志愿者认证")
     @PostMapping("/{id}/certify")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<?> certify(
             @ApiParam("志愿者ID") @PathVariable Long id,
             @RequestBody Map<String, String> body) {
@@ -148,6 +151,7 @@ public class VolunteerController {
      */
     @ApiOperation("获取排班列表")
     @GetMapping("/schedule")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<List<Map<String, Object>>> schedule(
             @ApiParam("志愿者ID(可选)") @RequestParam(required = false) Long volunteerId) {
         QueryWrapper<Task> wrapper = new QueryWrapper<>();
@@ -185,6 +189,7 @@ public class VolunteerController {
      */
     @ApiOperation("保存排班")
     @PostMapping("/schedule/save")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<?> saveSchedule(@RequestBody Map<String, Object> body) {
         Task task = new Task();
 
@@ -213,6 +218,7 @@ public class VolunteerController {
      */
     @ApiOperation("获取积分变动记录")
     @GetMapping("/points/log")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<PageResult<Map<String, Object>>> pointsLog(
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer page,
             @ApiParam("每页数量") @RequestParam(defaultValue = "10") Integer pageSize) {
@@ -244,6 +250,7 @@ public class VolunteerController {
      */
     @ApiOperation("保存积分规则")
     @PostMapping("/points/rule")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<?> savePointsRule(@RequestBody Map<String, Object> body) {
         // 积分规则暂以日志记录，后续可存入sys_dict_data表
         // body示例: {"action":"救援出勤","points":10} 或 {"rules":[{"action":"...","points":...}]}
@@ -256,6 +263,7 @@ public class VolunteerController {
      */
     @ApiOperation("导出服务时长")
     @GetMapping("/export-hours")
+    @RequireRole({"admin", "rescue_admin"})
     public void exportHours(HttpServletResponse response) {
         // 查询所有已认证的志愿者
         PageResult<Volunteer> allVolunteers = volunteerService.getVolunteerList(1, 1000, "1", null, null);
@@ -298,6 +306,7 @@ public class VolunteerController {
      */
     @ApiOperation("加入黑名单")
     @PostMapping("/{id}/blacklist")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<?> addToBlacklist(
             @ApiParam("志愿者ID") @PathVariable Long id) {
         Volunteer volunteer = volunteerService.getVolunteerById(id);
@@ -311,6 +320,7 @@ public class VolunteerController {
      */
     @ApiOperation("移出黑名单")
     @DeleteMapping("/{id}/blacklist")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<?> removeFromBlacklist(
             @ApiParam("志愿者ID") @PathVariable Long id) {
         Volunteer volunteer = volunteerService.getVolunteerById(id);

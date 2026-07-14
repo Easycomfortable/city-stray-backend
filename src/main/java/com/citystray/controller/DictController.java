@@ -3,6 +3,7 @@ package com.citystray.controller;
 import com.citystray.common.PageResult;
 import com.citystray.common.Result;
 import com.citystray.service.DictService;
+import com.citystray.annotation.RequireRole;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 @Api(tags = "字典管理")
+@RequireRole({"admin"})
 public class DictController {
 
     private final DictService dictService;

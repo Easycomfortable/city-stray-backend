@@ -1,5 +1,6 @@
 package com.citystray.controller;
 
+import com.citystray.annotation.RequireRole;
 import com.citystray.common.PageResult;
 import com.citystray.common.Result;
 import com.citystray.entity.DonationProject;
@@ -34,6 +35,7 @@ public class FinanceController {
 
     @ApiOperation("捐赠记录列表")
     @GetMapping("/donation/list")
+    @RequireRole({"admin"})
     public Result<PageResult<Map<String, Object>>> donationList(
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer page,
             @ApiParam("每页数量") @RequestParam(defaultValue = "10") Integer pageSize,
@@ -44,6 +46,7 @@ public class FinanceController {
 
     @ApiOperation("捐赠项目列表")
     @GetMapping("/project/list")
+    @RequireRole({"admin"})
     public Result<PageResult<Map<String, Object>>> projectList(
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer page,
             @ApiParam("每页数量") @RequestParam(defaultValue = "10") Integer pageSize) {
@@ -52,6 +55,7 @@ public class FinanceController {
 
     @ApiOperation("保存捐赠项目")
     @PostMapping("/project/save")
+    @RequireRole({"admin"})
     public Result<?> saveProject(@RequestBody DonationProject project) {
         financeService.saveProject(project);
         return Result.success();
@@ -59,6 +63,7 @@ public class FinanceController {
 
     @ApiOperation("删除捐赠项目")
     @DeleteMapping("/project/{id}")
+    @RequireRole({"admin"})
     public Result<?> deleteProject(@ApiParam("项目ID") @PathVariable Long id) {
         financeService.deleteProject(id);
         return Result.success();
@@ -66,6 +71,7 @@ public class FinanceController {
 
     @ApiOperation("财务报告")
     @GetMapping("/report")
+    @RequireRole({"admin"})
     public Result<Map<String, Object>> report(
             @ApiParam("月份(yyyy-MM)") @RequestParam(required = false) String month) {
         return Result.success(financeService.financeReport(month));
@@ -73,6 +79,7 @@ public class FinanceController {
 
     @ApiOperation("支出记录列表")
     @GetMapping("/expense/list")
+    @RequireRole({"admin"})
     public Result<PageResult<Map<String, Object>>> expenseList(
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer page,
             @ApiParam("每页数量") @RequestParam(defaultValue = "10") Integer pageSize,
@@ -82,6 +89,7 @@ public class FinanceController {
 
     @ApiOperation("对账")
     @PostMapping("/reconcile")
+    @RequireRole({"admin"})
     public Result<Map<String, Object>> reconcile() {
         return Result.success(financeService.reconcile());
     }
@@ -105,6 +113,7 @@ public class FinanceController {
 
     @ApiOperation("导出财务报表")
     @GetMapping("/report/export")
+    @RequireRole({"admin"})
     public void exportReport(@RequestParam(required = false) String month, HttpServletResponse response) {
         Map<String, Object> reportData = financeService.financeReport(month);
         List<Map<String, Object>> rows = new ArrayList<>();

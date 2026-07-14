@@ -1,5 +1,6 @@
 package com.citystray.controller;
 
+import com.citystray.annotation.RequireRole;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.citystray.common.PageResult;
@@ -71,6 +72,7 @@ public class UserController {
 
     @GetMapping("/list")
     @ApiOperation("分页查询用户列表")
+    @RequireRole({"admin"})
     public Result<?> list(
             @ApiParam("关键词") @RequestParam(required = false) String keyword,
             @ApiParam("角色") @RequestParam(required = false) String role,
@@ -108,6 +110,7 @@ public class UserController {
 
     @PutMapping("/{id}/status")
     @ApiOperation("更新用户状态")
+    @RequireRole({"admin"})
     public Result<?> updateStatus(
             @ApiParam("用户ID") @PathVariable Long id,
             @RequestBody Map<String, Integer> body) {

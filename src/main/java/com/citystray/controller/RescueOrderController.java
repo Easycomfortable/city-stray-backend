@@ -12,6 +12,7 @@ import com.citystray.service.RescueOrderService;
 import com.citystray.service.NotificationService;
 import com.citystray.entity.StrayReport;
 import com.citystray.mapper.StrayReportMapper;
+import com.citystray.annotation.RequireRole;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,6 +26,7 @@ import java.util.*;
  * 救助工单管理控制器
  */
 @Api(tags = "救助工单管理")
+@RequireRole({"admin", "rescue_admin"})
 @RestController
 @RequestMapping("/api/rescue-order")
 public class RescueOrderController {

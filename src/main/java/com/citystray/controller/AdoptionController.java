@@ -1,5 +1,6 @@
 package com.citystray.controller;
 
+import com.citystray.annotation.RequireRole;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.citystray.common.PageResult;
@@ -47,6 +48,7 @@ public class AdoptionController {
      */
     @ApiOperation("分页查询领养申请列表")
     @GetMapping("/list")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<PageResult<Map<String, Object>>> list(
             @ApiParam("关键词") @RequestParam(required = false) String keyword,
             @ApiParam("申请状态") @RequestParam(required = false) String status,
@@ -82,6 +84,7 @@ public class AdoptionController {
     @SuppressWarnings("unchecked")
     @ApiOperation("获取领养申请详情")
     @GetMapping("/{id}")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<Map<String, Object>> detail(
             @ApiParam("领养申请ID") @PathVariable Long id) {
         Map<String, Object> raw = adoptionService.getAdoptionDetail(id);
@@ -131,6 +134,7 @@ public class AdoptionController {
      */
     @ApiOperation("审核领养申请")
     @PostMapping("/{id}/review")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<?> review(
             @ApiParam("领养申请ID") @PathVariable Long id,
             @RequestBody Map<String, String> body) {
@@ -163,6 +167,7 @@ public class AdoptionController {
      */
     @ApiOperation("安排家访")
     @PostMapping("/{id}/visit")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<?> arrangeVisit(
             @ApiParam("领养申请ID") @PathVariable Long id,
             @RequestBody Map<String, String> body) {
@@ -178,6 +183,7 @@ public class AdoptionController {
      */
     @ApiOperation("开始试养")
     @PostMapping("/{id}/trial")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<?> startTrial(
             @ApiParam("领养申请ID") @PathVariable Long id,
             @RequestBody Map<String, String> body) {
@@ -191,6 +197,7 @@ public class AdoptionController {
      */
     @ApiOperation("确认正式领养")
     @PostMapping("/{id}/confirm")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<?> confirmAdoption(
             @ApiParam("领养申请ID") @PathVariable Long id,
             @RequestBody Map<String, String> body) {
@@ -271,6 +278,7 @@ public class AdoptionController {
      */
     @ApiOperation("回访记录列表")
     @GetMapping("/revisit/list")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<PageResult<Map<String, Object>>> revisitList(
             @ApiParam("领养申请ID") @RequestParam(required = false) Long applyId,
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer page,
@@ -314,6 +322,7 @@ public class AdoptionController {
      */
     @ApiOperation("保存回访记录")
     @PostMapping("/revisit/save")
+    @RequireRole({"admin", "rescue_admin"})
     public Result<?> saveRevisit(@RequestBody Map<String, Object> body) {
         RevisitRecord record = new RevisitRecord();
 

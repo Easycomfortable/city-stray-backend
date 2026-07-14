@@ -13,6 +13,7 @@ import com.citystray.entity.RescueOrder;
 import com.citystray.mapper.HospitalMapper;
 import com.citystray.mapper.RescueOrderMapper;
 import com.citystray.service.HospitalService;
+import com.citystray.annotation.RequireRole;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
  * 合作医院管理控制器
  */
 @Api(tags = "合作医院管理")
+@RequireRole({"admin", "rescue_admin", "hospital_admin"})
 @RestController
 @RequestMapping("/api/hospital")
 public class HospitalController {

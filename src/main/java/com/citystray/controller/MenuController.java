@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.citystray.common.Result;
 import com.citystray.entity.SysMenu;
 import com.citystray.mapper.SysMenuMapper;
+import com.citystray.annotation.RequireRole;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -19,6 +20,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 @Api(tags = "菜单管理")
+@RequireRole({"admin"})
 public class MenuController {
 
     private final SysMenuMapper sysMenuMapper;

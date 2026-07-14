@@ -10,6 +10,7 @@ import com.citystray.mapper.AdoptionApplyMapper;
 import com.citystray.mapper.DonationRecordMapper;
 import com.citystray.mapper.RescueOrderMapper;
 import com.citystray.mapper.StrayReportMapper;
+import com.citystray.annotation.RequireRole;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -33,6 +34,7 @@ import java.util.Map;
  * 数据看板控制器
  */
 @Api(tags = "数据看板")
+@RequireRole({"admin", "rescue_admin", "hospital_admin"})
 @RestController
 @RequestMapping("/api/dashboard")
 public class DashboardController {

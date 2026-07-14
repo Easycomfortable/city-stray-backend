@@ -7,6 +7,7 @@ import com.citystray.common.PageResult;
 import com.citystray.common.Result;
 import com.citystray.entity.Animal;
 import com.citystray.service.AnimalService;
+import com.citystray.annotation.RequireRole;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,6 +25,7 @@ import java.util.*;
  * 动物管理控制器
  */
 @Api(tags = "动物管理")
+@RequireRole({"admin", "rescue_admin", "hospital_admin"})
 @RestController
 @RequestMapping("/api/animal")
 @Slf4j
