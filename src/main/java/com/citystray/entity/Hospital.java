@@ -35,6 +35,12 @@ public class Hospital {
     @ApiModelProperty("所属区域")
     private String district;
 
+    @ApiModelProperty("经度")
+    private java.math.BigDecimal longitude;
+
+    @ApiModelProperty("纬度")
+    private java.math.BigDecimal latitude;
+
     @ApiModelProperty("状态(1=正常,0=暂停,2=终止)")
     private Integer status;
 

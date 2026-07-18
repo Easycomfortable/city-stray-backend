@@ -95,7 +95,7 @@ public class RescueOrderServiceImpl extends ServiceImpl<RescueOrderMapper, Rescu
         }
         // 校验状态流转
         List<String> validStatusList = Arrays.asList(
-                "pending", "responded", "catching", "transporting", "treating", "recovering", "adoptable", "adopted", "closed");
+                "pending", "responded", "catching", "treating", "recovering", "adoptable", "adopted", "closed");
         if (!validStatusList.contains(status)) {
             throw new RuntimeException("非法的工单状态：" + status);
         }
@@ -113,6 +113,7 @@ public class RescueOrderServiceImpl extends ServiceImpl<RescueOrderMapper, Rescu
         if (task != null) {
             TaskLog taskLog = new TaskLog();
             taskLog.setTaskId(task.getId());
+            taskLog.setVolunteerId(task.getVolunteerId() != null ? task.getVolunteerId() : 0L);
             taskLog.setAction(status);
             taskLog.setContent(description);
             taskLogMapper.insert(taskLog);
@@ -140,12 +141,13 @@ public class RescueOrderServiceImpl extends ServiceImpl<RescueOrderMapper, Rescu
         task.setOrderId(orderId);
         task.setVolunteerId(volunteerId);
         task.setTaskType("respond");
-        task.setStatus("assigned");
+        task.setStatus("accepted");
         taskMapper.insert(task);
 
         // 记录分配日志
         TaskLog taskLog = new TaskLog();
         taskLog.setTaskId(task.getId());
+        taskLog.setVolunteerId(volunteerId);
         taskLog.setAction("respond");
         taskLog.setContent("志愿者已响应工单");
         taskLogMapper.insert(taskLog);

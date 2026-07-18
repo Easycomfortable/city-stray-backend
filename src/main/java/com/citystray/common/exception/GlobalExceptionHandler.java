@@ -60,6 +60,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理运行时异常（业务校验类）
+     *
+     * @param e 运行时异常对象
+     * @return 统一错误响应
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public Result<?> handleRuntimeException(RuntimeException e) {
+        log.warn("业务异常: {}", e.getMessage());
+        return Result.error(400, e.getMessage());
+    }
+
+    /**
      * 处理其他未知异常
      *
      * @param e 异常对象

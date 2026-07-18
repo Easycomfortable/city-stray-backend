@@ -30,11 +30,11 @@ public class StrayReportServiceImpl extends ServiceImpl<StrayReportMapper, Stray
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long submitReport(StrayReport report) {
-        // 生成上报编号: SR + yyyyMMdd + 3位序号
+        // 生成上报编号: RS + yyyyMMdd + 3位序号
         String dateStr = DateUtil.format(new Date(), "yyyyMMdd");
         long count = this.count(new LambdaQueryWrapper<StrayReport>()
-                .likeRight(StrayReport::getReportNo, "SR" + dateStr));
-        String reportNo = "SR" + dateStr + String.format("%03d", count + 1);
+                .likeRight(StrayReport::getReportNo, "RS" + dateStr));
+        String reportNo = "RS" + dateStr + String.format("%03d", count + 1);
         report.setReportNo(reportNo);
         report.setStatus(0); // 待处理
         this.save(report);

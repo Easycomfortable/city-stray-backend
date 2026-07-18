@@ -4,12 +4,17 @@ server:
 
 # Spring 核心配置
 spring:
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
   # 数据源配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/city_stray?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: Llf@1234
   # Redis 缓存配置
   redis:
     host: localhost
@@ -51,3 +56,15 @@ jwt:
 logging:
   level:
     com.citystray: debug
+
+
+# 微信小程序配置
+wx:
+  miniapp:
+    appid: wx_your_appid
+    secret: your_appid_secret
+  pay:
+    appid: wx_your_appid
+    mch-id: your_mch_id
+    api-key: your_api_key
+    notify-url: https://your-domain.com/api/wx/pay/notify

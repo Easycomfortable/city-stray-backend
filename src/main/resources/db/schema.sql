@@ -326,6 +326,8 @@ CREATE TABLE `hospital` (
   `contact_person`  VARCHAR(50)  DEFAULT NULL             COMMENT '负责人',
   `license_no`      VARCHAR(50)  DEFAULT NULL             COMMENT '资质编号',
   `district`        VARCHAR(20)  DEFAULT NULL             COMMENT '所属区域',
+  `longitude`       DECIMAL(10,7) DEFAULT NULL            COMMENT '经度',
+  `latitude`        DECIMAL(10,7) DEFAULT NULL            COMMENT '纬度',
   `status`          TINYINT      NOT NULL DEFAULT 1       COMMENT '合作状态：1-合作中 0-已暂停 2-已终止',
   `discount_info`   TEXT         DEFAULT NULL             COMMENT '优惠项目说明',
   `price_standard`  TEXT         DEFAULT NULL             COMMENT '结算价格标准',
@@ -346,11 +348,11 @@ CREATE TABLE `hospital` (
 
 -- 用户数据
 INSERT INTO `user` (`id`, `openid`, `username`, `password`, `phone`, `nickname`, `avatar`, `role`, `status`) VALUES
-(1, 'ox_test_admin_001',  'admin',    '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36Kz0dI/A.R3D02vn1Dv7mO', '13800000001', '系统管理员',  NULL, 'admin',          1),
-(2, 'ox_test_user_001',   'zhangsan', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36Kz0dI/A.R3D02vn1Dv7mO', '13800000002', '张三',       NULL, 'user',           1),
-(3, 'ox_test_user_002',   'lisi',     '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36Kz0dI/A.R3D02vn1Dv7mO', '13800000003', '李四',       NULL, 'user',           1),
-(4, 'ox_test_rescue_001', 'wangwei',  '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36Kz0dI/A.R3D02vn1Dv7mO', '13800000004', '王队长',     NULL, 'rescue_admin',   1),
-(5, 'ox_test_hosp_001',   'doctorliu','$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36Kz0dI/A.R3D02vn1Dv7mO', '13800000005', '刘医生',     NULL, 'hospital_admin', 1);
+(1, 'ox_test_admin_001',  'admin',    '$2a$10$ZsGvdNtcpnN8Vdn1zQVG0u/69VdN16wOD/G8dFQ.VA9pjJ3kJ4FzW', '13800000001', '系统管理员',  NULL, 'admin',          1),
+(2, 'ox_test_user_001',   'zhangsan', '$2a$10$ZsGvdNtcpnN8Vdn1zQVG0u/69VdN16wOD/G8dFQ.VA9pjJ3kJ4FzW', '13800000002', '张三',       NULL, 'user',           1),
+(3, 'ox_test_user_002',   'lisi',     '$2a$10$ZsGvdNtcpnN8Vdn1zQVG0u/69VdN16wOD/G8dFQ.VA9pjJ3kJ4FzW', '13800000003', '李四',       NULL, 'user',           1),
+(4, 'ox_test_rescue_001', 'wangwei',  '$2a$10$ZsGvdNtcpnN8Vdn1zQVG0u/69VdN16wOD/G8dFQ.VA9pjJ3kJ4FzW', '13800000004', '王队长',     NULL, 'rescue_admin',   1),
+(5, 'ox_test_hosp_001',   'doctorliu','$2a$10$ZsGvdNtcpnN8Vdn1zQVG0u/69VdN16wOD/G8dFQ.VA9pjJ3kJ4FzW', '13800000005', '刘医生',     NULL, 'hospital_admin', 1);
 
 -- 志愿者数据
 INSERT INTO `volunteer` (`id`, `user_id`, `real_name`, `id_card`, `phone`, `skill_tags`, `total_hours`, `points`, `auth_status`) VALUES
@@ -359,10 +361,10 @@ INSERT INTO `volunteer` (`id`, `user_id`, `real_name`, `id_card`, `phone`, `skil
 (3, 4, '王伟', '110101198803033456', '13800000004', '["捕捉","急救","驾驶"]', 96.0, 260, 1);
 
 -- 合作医院数据
-INSERT INTO `hospital` (`id`, `name`, `address`, `phone`, `contact_person`, `license_no`, `district`, `status`, `discount_info`, `price_standard`) VALUES
-(1, '爱心宠物医院',     '朝阳区建国路88号',     '010-88886666', '张院长', 'BJ-VET-2024-001', '朝阳区', 1, '绝育手术8折优惠',     '绝育300元/例，疫苗50元/针'),
-(2, '仁心动物诊所',     '海淀区中关村大街66号',  '010-66668888', '李主任', 'BJ-VET-2024-002', '海淀区', 1, '流浪动物免费体检',    '基础检查100元/次，手术500元起'),
-(3, '康贝宠物医疗中心', '丰台区南三环西路12号',  '010-55557777', '王院长', 'BJ-VET-2024-003', '丰台区', 1, '救助组织7折结算',     '综合诊疗200元起');
+INSERT INTO `hospital` (`id`, `name`, `address`, `phone`, `contact_person`, `license_no`, `district`, `longitude`, `latitude`, `status`, `discount_info`, `price_standard`) VALUES
+(1, '爱心宠物医院',     '朝阳区建国路88号',     '010-88886666', '张院长', 'BJ-VET-2024-001', '朝阳区', 116.4552000, 39.9091000, 1, '绝育手术8折优惠',     '绝育300元/例，疫苗50元/针'),
+(2, '仁心动物诊所',     '海淀区中关村大街66号',  '010-66668888', '李主任', 'BJ-VET-2024-002', '海淀区', 116.3162000, 39.9818000, 1, '流浪动物免费体检',    '基础检查100元/次，手术500元起'),
+(3, '康贝宠物医疗中心', '丰台区南三环西路12号',  '010-55557777', '王院长', 'BJ-VET-2024-003', '丰台区', 116.3345000, 39.8468000, 1, '救助组织7折结算',     '综合诊疗200元起');
 
 -- 流浪动物上报数据
 INSERT INTO `stray_report` (`id`, `user_id`, `report_no`, `longitude`, `latitude`, `address`, `district`, `animal_type`, `description`, `quantity`, `is_injured`, `is_friendly`, `photos`, `status`) VALUES

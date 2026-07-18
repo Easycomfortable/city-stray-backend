@@ -39,7 +39,7 @@ public class VolunteerServiceImpl extends ServiceImpl<VolunteerMapper, Volunteer
         LambdaQueryWrapper<Volunteer> wrapper = new LambdaQueryWrapper<>();
 
         if (authStatus != null && !authStatus.isEmpty()) {
-            wrapper.eq(Volunteer::getAuthStatus, authStatus);
+            wrapper.eq(Volunteer::getAuthStatus, Integer.parseInt(authStatus));
         }
         if (keyword != null && !keyword.isEmpty()) {
             wrapper.and(w -> w.like(Volunteer::getRealName, keyword)
@@ -111,6 +111,7 @@ public class VolunteerServiceImpl extends ServiceImpl<VolunteerMapper, Volunteer
             map.put("action", taskLog.getAction());
             map.put("content", taskLog.getContent());
             map.put("createTime", taskLog.getCreateTime());
+            map.put("volunteerId", taskLog.getVolunteerId());
             records.add(map);
         }
 

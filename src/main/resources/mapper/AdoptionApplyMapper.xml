@@ -15,7 +15,8 @@
             AND ad.stage = #{params.stage}
         </if>
         <if test="params.realName != null and params.realName != ''">
-            AND ad.real_name LIKE CONCAT('%', #{params.realName}, '%')
+            AND (ad.real_name LIKE CONCAT('%', #{params.realName}, '%')
+                 OR a.name LIKE CONCAT('%', #{params.realName}, '%'))
         </if>
         ORDER BY ad.create_time DESC
     </select>
