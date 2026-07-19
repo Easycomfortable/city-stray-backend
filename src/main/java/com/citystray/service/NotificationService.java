@@ -15,7 +15,7 @@ public interface NotificationService {
      * 获取用户通知列表（分页）
      */
     PageResult<SysNotification> getNotificationList(Long userId, Integer page,
-                                                     Integer pageSize, Boolean unreadOnly);
+                                                     Integer pageSize, Boolean unreadOnly, String type);
 
     /**
      * 获取未读数量

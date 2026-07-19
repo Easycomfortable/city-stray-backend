@@ -27,6 +27,8 @@ public class ContentServiceImpl implements ContentService {
     private final ContentNoticeMapper noticeMapper;
     private final ContentReportMapper reportMapper;
     private final ContentArticleMapper articleMapper;
+    private final ContentCommentMapper commentMapper;
+    private final StoryLikeMapper storyLikeMapper;
 
     // ==================== Banner ====================
 
@@ -67,13 +69,20 @@ public class ContentServiceImpl implements ContentService {
     // ==================== 故事 ====================
 
     @Override
-    public PageResult<ContentStory> storyList(Integer page, Integer pageSize, String status) {
+    public PageResult<ContentStory> storyList(Integer page, Integer pageSize, String status, String sort) {
         LambdaQueryWrapper<ContentStory> wrapper = new LambdaQueryWrapper<>();
         if (StringUtils.hasText(status)) {
             status = status.toUpperCase();
             wrapper.eq(ContentStory::getStatus, status);
         }
-        wrapper.orderByDesc(ContentStory::getCreateTime);
+        if ("hot".equals(sort)) {
+            wrapper.orderByDesc(ContentStory::getViewCount);
+        } else if ("featured".equals(sort)) {
+            wrapper.gt(ContentStory::getViewCount, 50);
+            wrapper.orderByDesc(ContentStory::getViewCount);
+        } else {
+            wrapper.orderByDesc(ContentStory::getCreateTime);
+        }
         Page<ContentStory> pageObj = storyMapper.selectPage(new Page<>(page, pageSize), wrapper);
         return new PageResult<>(pageObj.getTotal(), pageObj.getRecords());
     }
@@ -105,7 +114,99 @@ public class ContentServiceImpl implements ContentService {
         if (story.getViewCount() == null) {
             story.setViewCount(0);
         }
+        if (story.getLikeCount() == null) {
+            story.setLikeCount(0);
+        }
+        if (story.getCommentCount() == null) {
+            story.setCommentCount(0);
+        }
         storyMapper.insert(story);
+    }
+
+    @Override
+    public ContentStory getStoryDetail(Long id) {
+        return storyMapper.selectById(id);
+    }
+
+    // ==================== 评论 ====================
+
+    @Override
+    public List<ContentComment> commentList(Long storyId) {
+        LambdaQueryWrapper<ContentComment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ContentComment::getStoryId, storyId);
+        wrapper.orderByAsc(ContentComment::getCreateTime);
+        return commentMapper.selectList(wrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ContentComment addComment(ContentComment comment) {
+        Long userId = UserContext.getUserId();
+        if (userId != null) {
+            comment.setUserId(userId);
+        }
+        String username = UserContext.getUsername();
+        if (username != null && !StringUtils.hasText(comment.getNickname())) {
+            comment.setNickname(username);
+        }
+        commentMapper.insert(comment);
+
+        // 更新帖子评论数 +1
+        ContentStory story = storyMapper.selectById(comment.getStoryId());
+        if (story != null) {
+            int count = story.getCommentCount() != null ? story.getCommentCount() : 0;
+            story.setCommentCount(count + 1);
+            storyMapper.updateById(story);
+        }
+        return comment;
+    }
+
+    // ==================== 点赞 ====================
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean toggleLike(Long storyId) {
+        Long userId = UserContext.getUserId();
+        LambdaQueryWrapper<StoryLike> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StoryLike::getStoryId, storyId);
+        wrapper.eq(StoryLike::getUserId, userId);
+        StoryLike existing = storyLikeMapper.selectOne(wrapper);
+
+        ContentStory story = storyMapper.selectById(storyId);
+        if (story == null) {
+            return false;
+        }
+
+        if (existing != null) {
+            // 取消点赞
+            storyLikeMapper.deleteById(existing.getId());
+            int count = story.getLikeCount() != null ? story.getLikeCount() : 0;
+            story.setLikeCount(Math.max(0, count - 1));
+            storyMapper.updateById(story);
+            return false;
+        } else {
+            // 点赞
+            StoryLike like = new StoryLike();
+            like.setStoryId(storyId);
+            like.setUserId(userId);
+            storyLikeMapper.insert(like);
+            int count = story.getLikeCount() != null ? story.getLikeCount() : 0;
+            story.setLikeCount(count + 1);
+            storyMapper.updateById(story);
+            return true;
+        }
+    }
+
+    @Override
+    public boolean isLiked(Long storyId) {
+        Long userId = UserContext.getUserId();
+        if (userId == null) {
+            return false;
+        }
+        LambdaQueryWrapper<StoryLike> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StoryLike::getStoryId, storyId);
+        wrapper.eq(StoryLike::getUserId, userId);
+        return storyLikeMapper.selectCount(wrapper) > 0;
     }
 
     // ==================== 公告 ====================

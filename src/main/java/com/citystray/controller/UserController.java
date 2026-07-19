@@ -6,8 +6,15 @@ import com.citystray.common.PageResult;
 import com.citystray.common.Result;
 import com.citystray.entity.SysLog;
 import com.citystray.entity.User;
+import com.citystray.entity.StrayReport;
+import com.citystray.entity.AdoptionApply;
+import com.citystray.entity.Volunteer;
 import com.citystray.mapper.UserMapper;
+import com.citystray.mapper.StrayReportMapper;
+import com.citystray.mapper.AdoptionApplyMapper;
+import com.citystray.mapper.VolunteerMapper;
 import com.citystray.service.LogService;
+import com.citystray.annotation.OperationLog;
 import com.citystray.service.UserService;
 import com.citystray.util.UserContext;
 import io.swagger.annotations.Api;
@@ -31,9 +38,13 @@ public class UserController {
     private final UserService userService;
     private final LogService logService;
     private final UserMapper userMapper;
+    private final StrayReportMapper strayReportMapper;
+    private final AdoptionApplyMapper adoptionApplyMapper;
+    private final VolunteerMapper volunteerMapper;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
+    @OperationLog(module = "用户管理", type = "LOGIN", content = "用户登录")
     @ApiOperation("用户登录")
     public Result<?> login(@RequestBody Map<String, String> loginForm) {
         String username = loginForm.get("username");
@@ -62,7 +73,39 @@ public class UserController {
         return Result.success(data);
     }
 
+    @GetMapping("/my-stats")
+    @ApiOperation("获取当前用户统计数据(上报数/领养数/积分)")
+    public Result<?> myStats() {
+        Long userId = UserContext.getUserId();
+        if (userId == null) {
+            return Result.success(Map.of("reportCount", 0, "adoptCount", 0, "points", 0));
+        }
+
+        // 上报数量
+        long reportCount = strayReportMapper.selectCount(
+                new LambdaQueryWrapper<StrayReport>().eq(StrayReport::getUserId, userId));
+
+        // 领养申请数量
+        long adoptCount = adoptionApplyMapper.selectCount(
+                new LambdaQueryWrapper<AdoptionApply>().eq(AdoptionApply::getUserId, userId));
+
+        // 积分(从志愿者表查)
+        int points = 0;
+        Volunteer volunteer = volunteerMapper.selectOne(
+                new LambdaQueryWrapper<Volunteer>().eq(Volunteer::getUserId, userId));
+        if (volunteer != null && volunteer.getPoints() != null) {
+            points = volunteer.getPoints();
+        }
+
+        return Result.success(Map.of(
+                "reportCount", reportCount,
+                "adoptCount", adoptCount,
+                "points", points
+        ));
+    }
+
     @PostMapping("/logout")
+    @OperationLog(module = "用户管理", type = "LOGIN", content = "用户退出登录")
     @ApiOperation("用户退出登录")
     public Result<?> logout() {
         userService.logout();
@@ -107,6 +150,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/status")
+    @OperationLog(module = "用户管理", type = "UPDATE", content = "更新用户状态")
     @ApiOperation("更新用户状态")
     public Result<?> updateStatus(
             @ApiParam("用户ID") @PathVariable Long id,
@@ -122,6 +166,7 @@ public class UserController {
     }
 
     @PutMapping("/profile")
+    @OperationLog(module = "用户管理", type = "UPDATE", content = "修改个人信息")
     @ApiOperation("修改个人信息")
     public Result<?> updateProfile(@RequestBody Map<String, String> body) {
         Long userId = UserContext.getUserId();
@@ -150,6 +195,7 @@ public class UserController {
     }
 
     @PutMapping("/password")
+    @OperationLog(module = "用户管理", type = "UPDATE", content = "修改密码")
     @ApiOperation("修改密码")
     public Result<?> updatePassword(@RequestBody Map<String, String> body) {
         Long userId = UserContext.getUserId();

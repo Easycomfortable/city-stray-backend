@@ -2,6 +2,7 @@ package com.citystray.controller;
 
 import com.citystray.common.PageResult;
 import com.citystray.common.Result;
+import com.citystray.annotation.OperationLog;
 import com.citystray.entity.DonationProject;
 import com.citystray.entity.DonationRecord;
 import com.citystray.mapper.DonationProjectMapper;
@@ -52,6 +53,7 @@ public class FinanceController {
         return Result.success(financeService.projectList(page, pageSize));
     }
 
+    @OperationLog(module = "财务管理", type = "CREATE", content = "保存捐赠项目")
     @ApiOperation("保存捐赠项目")
     @PostMapping("/project/save")
     public Result<?> saveProject(@RequestBody DonationProject project) {
@@ -59,6 +61,7 @@ public class FinanceController {
         return Result.success();
     }
 
+    @OperationLog(module = "财务管理", type = "DELETE", content = "删除捐赠项目")
     @ApiOperation("删除捐赠项目")
     @DeleteMapping("/project/{id}")
     public Result<?> deleteProject(@ApiParam("项目ID") @PathVariable Long id) {
@@ -82,12 +85,14 @@ public class FinanceController {
         return Result.success(financeService.expenseList(page, pageSize, category));
     }
 
+    @OperationLog(module = "财务管理", type = "QUERY", content = "财务对账")
     @ApiOperation("对账")
     @PostMapping("/reconcile")
     public Result<Map<String, Object>> reconcile() {
         return Result.success(financeService.reconcile());
     }
 
+    @OperationLog(module = "财务管理", type = "CREATE", content = "用户捐款")
     @ApiOperation("用户捐款（小程序端）")
     @PostMapping("/donate")
     public Result<?> donate(@RequestBody Map<String, Object> body) {
@@ -113,6 +118,7 @@ public class FinanceController {
         return Result.success(record.getId());
     }
 
+    @OperationLog(module = "财务管理", type = "EXPORT", content = "导出财务报表")
     @ApiOperation("导出财务报表")
     @GetMapping("/report/export")
     public void exportReport(@RequestParam(required = false) String month, HttpServletResponse response) {

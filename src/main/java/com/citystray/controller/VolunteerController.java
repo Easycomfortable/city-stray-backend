@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.citystray.common.PageResult;
 import com.citystray.common.Result;
+import com.citystray.annotation.OperationLog;
 import com.citystray.entity.Task;
 import com.citystray.entity.User;
 import com.citystray.entity.Volunteer;
@@ -102,6 +103,7 @@ public class VolunteerController {
     /**
      * 审核志愿者认证
      */
+    @OperationLog(module = "志愿者管理", type = "UPDATE", content = "审核志愿者认证")
     @ApiOperation("审核志愿者认证")
     @PostMapping("/{id}/certify")
     public Result<?> certify(
@@ -126,6 +128,7 @@ public class VolunteerController {
     /**
      * 申请成为志愿者（小程序端）
      */
+    @OperationLog(module = "志愿者管理", type = "CREATE", content = "申请成为志愿者")
     @ApiOperation("申请成为志愿者")
     @PostMapping("/apply")
     public Result<?> apply(@RequestBody Map<String, Object> body) {
@@ -215,6 +218,7 @@ public class VolunteerController {
     /**
      * 保存排班（新增或更新）
      */
+    @OperationLog(module = "志愿者管理", type = "CREATE", content = "保存排班")
     @ApiOperation("保存排班")
     @PostMapping("/schedule/save")
     public Result<?> saveSchedule(@RequestBody Map<String, Object> body) {
@@ -257,6 +261,7 @@ public class VolunteerController {
     /**
      * 删除排班
      */
+    @OperationLog(module = "志愿者管理", type = "DELETE", content = "删除排班")
     @ApiOperation("删除排班")
     @DeleteMapping("/schedule/{id}")
     public Result<?> deleteSchedule(@PathVariable Long id) {
@@ -343,6 +348,7 @@ public class VolunteerController {
     /**
      * 保存积分规则（批量更新）
      */
+    @OperationLog(module = "志愿者管理", type = "UPDATE", content = "保存积分规则")
     @ApiOperation("保存积分规则")
     @PostMapping("/points/rule")
     public Result<?> savePointsRule(@RequestBody Map<String, Object> body) {
@@ -406,6 +412,7 @@ public class VolunteerController {
     /**
      * 审核兑换申请
      */
+    @OperationLog(module = "志愿者管理", type = "UPDATE", content = "审核兑换申请")
     @ApiOperation("审核兑换申请")
     @PostMapping("/exchange/{id}/review")
     public Result<?> reviewExchange(
@@ -447,6 +454,7 @@ public class VolunteerController {
      * 导出服务时长Excel
      * 查询所有志愿者并导出姓名、电话、累计时长、积分等数据
      */
+    @OperationLog(module = "志愿者管理", type = "EXPORT", content = "导出服务时长")
     @ApiOperation("导出服务时长")
     @GetMapping("/export-hours")
     public void exportHours(HttpServletResponse response) {
@@ -489,6 +497,7 @@ public class VolunteerController {
     /**
      * 加入黑名单
      */
+    @OperationLog(module = "志愿者管理", type = "UPDATE", content = "加入黑名单")
     @ApiOperation("加入黑名单")
     @PostMapping("/{id}/blacklist")
     public Result<?> addToBlacklist(
@@ -502,6 +511,7 @@ public class VolunteerController {
     /**
      * 移出黑名单
      */
+    @OperationLog(module = "志愿者管理", type = "UPDATE", content = "移出黑名单")
     @ApiOperation("移出黑名单")
     @DeleteMapping("/{id}/blacklist")
     public Result<?> removeFromBlacklist(

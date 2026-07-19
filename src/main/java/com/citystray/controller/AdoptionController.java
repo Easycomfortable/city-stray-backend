@@ -2,6 +2,7 @@ package com.citystray.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.citystray.annotation.OperationLog;
 import com.citystray.common.PageResult;
 import com.citystray.common.Result;
 import com.citystray.entity.AdoptionApply;
@@ -129,6 +130,7 @@ public class AdoptionController {
     /**
      * 审核领养申请
      */
+    @OperationLog(module = "领养管理", type = "UPDATE", content = "审核领养申请")
     @ApiOperation("审核领养申请")
     @PostMapping("/{id}/review")
     public Result<?> review(
@@ -161,6 +163,7 @@ public class AdoptionController {
     /**
      * 安排家访
      */
+    @OperationLog(module = "领养管理", type = "UPDATE", content = "安排家访")
     @ApiOperation("安排家访")
     @PostMapping("/{id}/visit")
     public Result<?> arrangeVisit(
@@ -176,6 +179,7 @@ public class AdoptionController {
     /**
      * 开始试养阶段
      */
+    @OperationLog(module = "领养管理", type = "UPDATE", content = "开始试养")
     @ApiOperation("开始试养")
     @PostMapping("/{id}/trial")
     public Result<?> startTrial(
@@ -189,6 +193,7 @@ public class AdoptionController {
     /**
      * 确认正式领养
      */
+    @OperationLog(module = "领养管理", type = "UPDATE", content = "确认正式领养")
     @ApiOperation("确认正式领养")
     @PostMapping("/{id}/confirm")
     public Result<?> confirmAdoption(
@@ -201,6 +206,7 @@ public class AdoptionController {
     /**
      * 用户提交领养申请（小程序端）
      */
+    @OperationLog(module = "领养管理", type = "CREATE", content = "提交领养申请")
     @ApiOperation("用户提交领养申请")
     @PostMapping("/apply")
     public Result<?> apply(@RequestBody Map<String, Object> body) {
@@ -312,6 +318,7 @@ public class AdoptionController {
     /**
      * 保存回访记录
      */
+    @OperationLog(module = "领养管理", type = "CREATE", content = "保存回访记录")
     @ApiOperation("保存回访记录")
     @PostMapping("/revisit/save")
     public Result<?> saveRevisit(@RequestBody Map<String, Object> body) {

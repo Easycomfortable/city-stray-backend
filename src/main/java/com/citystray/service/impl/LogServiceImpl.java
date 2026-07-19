@@ -22,7 +22,7 @@ public class LogServiceImpl implements LogService {
     private final SysLogMapper sysLogMapper;
 
     @Override
-    public PageResult<Map<String, Object>> list(String keyword, String type, Integer page, Integer pageSize) {
+    public PageResult<Map<String, Object>> list(String keyword, String type, String dateRange, Integer page, Integer pageSize) {
         Page<SysLog> pageParam = new Page<>(page, pageSize);
 
         LambdaQueryWrapper<SysLog> wrapper = new LambdaQueryWrapper<>();
@@ -38,7 +38,18 @@ public class LogServiceImpl implements LogService {
                     .like(SysLog::getUsername, keyword)
                     .or()
                     .like(SysLog::getContent, keyword)
+                    .or()
+                    .like(SysLog::getModule, keyword)
             );
+        }
+
+        // 日期范围过滤 (格式: "2026-07-15,2026-07-18")
+        if (StringUtils.hasText(dateRange)) {
+            String[] dates = dateRange.split(",");
+            if (dates.length == 2) {
+                wrapper.ge(SysLog::getCreateTime, dates[0].trim() + " 00:00:00");
+                wrapper.le(SysLog::getCreateTime, dates[1].trim() + " 23:59:59");
+            }
         }
 
         // 按创建时间倒序
@@ -51,9 +62,12 @@ public class LogServiceImpl implements LogService {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("id", sysLog.getId());
             map.put("username", sysLog.getUsername());
+            map.put("operator", sysLog.getUsername());
+            map.put("module", sysLog.getModule());
             map.put("type", sysLog.getType());
             map.put("content", sysLog.getContent());
             map.put("ip", sysLog.getIp());
+            map.put("success", sysLog.getSuccess());
             map.put("createTime", sysLog.getCreateTime());
             records.add(map);
         }

@@ -38,6 +38,12 @@ public class ContentStory {
     @ApiModelProperty("浏览量")
     private Integer viewCount;
 
+    @ApiModelProperty("点赞数")
+    private Integer likeCount;
+
+    @ApiModelProperty("评论数")
+    private Integer commentCount;
+
     @TableField(fill = FieldFill.INSERT)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("创建时间")

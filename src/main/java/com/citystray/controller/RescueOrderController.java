@@ -1,6 +1,7 @@
 package com.citystray.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.citystray.annotation.OperationLog;
 import com.citystray.common.PageResult;
 import com.citystray.common.Result;
 import com.citystray.entity.RescueOrder;
@@ -136,6 +137,7 @@ public class RescueOrderController {
     /**
      * 更新工单状态
      */
+    @OperationLog(module = "救助工单", type = "UPDATE", content = "更新工单状态")
     @ApiOperation("更新工单状态")
     @PutMapping("/{id}/status")
     public Result<?> updateStatus(
@@ -184,6 +186,7 @@ public class RescueOrderController {
     /**
      * 分配志愿者
      */
+    @OperationLog(module = "救助工单", type = "UPDATE", content = "分配志愿者")
     @ApiOperation("分配志愿者")
     @PostMapping("/{id}/assign")
     public Result<?> assignVolunteer(
@@ -197,6 +200,7 @@ public class RescueOrderController {
     /**
      * 关联医院
      */
+    @OperationLog(module = "救助工单", type = "UPDATE", content = "关联医院")
     @ApiOperation("关联医院")
     @PostMapping("/{id}/hospital")
     public Result<?> assignHospital(
@@ -242,6 +246,7 @@ public class RescueOrderController {
     /**
      * 添加工单备注
      */
+    @OperationLog(module = "救助工单", type = "CREATE", content = "添加工单备注")
     @ApiOperation("添加工单备注")
     @PostMapping("/{id}/note")
     public Result<?> addNote(
@@ -274,6 +279,7 @@ public class RescueOrderController {
      * 导出工单Excel
      * 查询所有工单数据并导出为xlsx文件
      */
+    @OperationLog(module = "救助工单", type = "EXPORT", content = "导出工单数据")
     @ApiOperation("导出工单")
     @GetMapping("/export")
     public void export(HttpServletResponse response) {

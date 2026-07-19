@@ -15,9 +15,18 @@ public interface ContentService {
     void updateBannerSort(List<Map<String, Object>> sortList);
 
     // ========== 故事 ==========
-    PageResult<ContentStory> storyList(Integer page, Integer pageSize, String status);
+    PageResult<ContentStory> storyList(Integer page, Integer pageSize, String status, String sort);
     void reviewStory(Long id, String status);
     void saveStory(ContentStory story);
+    ContentStory getStoryDetail(Long id);
+
+    // ========== 评论 ==========
+    List<ContentComment> commentList(Long storyId);
+    ContentComment addComment(ContentComment comment);
+
+    // ========== 点赞 ==========
+    boolean toggleLike(Long storyId);
+    boolean isLiked(Long storyId);
 
     // ========== 公告 ==========
     PageResult<ContentNotice> noticeList(Integer page, Integer pageSize);

@@ -43,6 +43,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/api/animal/*",
                         "/api/hospital/list",
                         "/api/finance/project/list",
+                        // 地图服务（代理天地图API，无需登录）
+                        "/api/map/reverse-geocode",
                         // 接口文档
                         "/doc.html",
                         "/webjars/**",

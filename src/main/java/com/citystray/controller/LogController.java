@@ -26,10 +26,11 @@ public class LogController {
     public Result<?> list(
             @ApiParam("关键词") @RequestParam(required = false) String keyword,
             @ApiParam("日志类型") @RequestParam(required = false) String type,
+            @ApiParam("日期范围") @RequestParam(required = false) String dateRange,
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer page,
             @ApiParam("每页数量") @RequestParam(defaultValue = "10") Integer pageSize) {
 
-        PageResult<Map<String, Object>> pageResult = logService.list(keyword, type, page, pageSize);
+        PageResult<Map<String, Object>> pageResult = logService.list(keyword, type, dateRange, page, pageSize);
         return Result.success(pageResult);
     }
 }

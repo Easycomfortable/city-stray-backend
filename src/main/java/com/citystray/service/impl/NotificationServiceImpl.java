@@ -53,11 +53,14 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public PageResult<SysNotification> getNotificationList(Long userId, Integer page,
-                                                            Integer pageSize, Boolean unreadOnly) {
+                                                            Integer pageSize, Boolean unreadOnly, String type) {
         LambdaQueryWrapper<SysNotification> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysNotification::getUserId, userId);
         if (Boolean.TRUE.equals(unreadOnly)) {
             wrapper.eq(SysNotification::getIsRead, false);
+        }
+        if (type != null && !type.isEmpty()) {
+            wrapper.eq(SysNotification::getType, type);
         }
         wrapper.orderByDesc(SysNotification::getCreateTime);
         Page<SysNotification> pageObj = notificationMapper.selectPage(new Page<>(page, pageSize), wrapper);

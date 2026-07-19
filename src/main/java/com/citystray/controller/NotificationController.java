@@ -27,9 +27,10 @@ public class NotificationController {
     public Result<PageResult<SysNotification>> list(
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer page,
             @ApiParam("每页数量") @RequestParam(defaultValue = "10") Integer pageSize,
-            @ApiParam("仅未读") @RequestParam(required = false) Boolean unreadOnly) {
+            @ApiParam("仅未读") @RequestParam(required = false) Boolean unreadOnly,
+            @ApiParam("消息类型(SYSTEM/ADOPTION/RESCUE/DONATION/VOLUNTEER)") @RequestParam(required = false) String type) {
         Long userId = UserContext.getUserId();
-        return Result.success(notificationService.getNotificationList(userId, page, pageSize, unreadOnly));
+        return Result.success(notificationService.getNotificationList(userId, page, pageSize, unreadOnly, type));
     }
 
     @ApiOperation("未读数量")

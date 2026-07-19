@@ -2,8 +2,13 @@ package com.citystray.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.citystray.common.Result;
+import com.citystray.annotation.OperationLog;
 import com.citystray.entity.SysMenu;
+import com.citystray.entity.SysRole;
 import com.citystray.mapper.SysMenuMapper;
+import com.citystray.mapper.SysRoleMapper;
+import com.citystray.mapper.SysRoleMenuMapper;
+import com.citystray.util.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -13,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/menu")
@@ -22,6 +28,8 @@ import java.util.*;
 public class MenuController {
 
     private final SysMenuMapper sysMenuMapper;
+    private final SysRoleMapper sysRoleMapper;
+    private final SysRoleMenuMapper sysRoleMenuMapper;
 
     @GetMapping("/tree")
     @ApiOperation("获取菜单树")
@@ -36,12 +44,57 @@ public class MenuController {
         return Result.success(tree);
     }
 
+    @GetMapping("/user-menus")
+    @ApiOperation("获取当前用户菜单树（按角色过滤）")
+    public Result<?> userMenus() {
+        // 查询所有可见菜单
+        LambdaQueryWrapper<SysMenu> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(SysMenu::getSort);
+        List<SysMenu> allMenus = sysMenuMapper.selectList(wrapper);
+
+        // 尝试按角色过滤
+        String roleCode = UserContext.getRole();
+        if (roleCode != null) {
+            LambdaQueryWrapper<SysRole> roleWrapper = new LambdaQueryWrapper<>();
+            roleWrapper.eq(SysRole::getCode, roleCode);
+            SysRole role = sysRoleMapper.selectOne(roleWrapper);
+
+            if (role != null) {
+                List<Long> menuIds = sysRoleMenuMapper.selectMenuIdsByRoleId(role.getId());
+                if (menuIds != null && !menuIds.isEmpty()) {
+                    Set<Long> menuIdSet = new HashSet<>(menuIds);
+                    // 保留有权限的菜单 + 有子菜单的父级目录
+                    Set<Long> parentIds = allMenus.stream()
+                            .filter(m -> menuIdSet.contains(m.getId()))
+                            .map(m -> m.getParentId() != null ? m.getParentId() : 0L)
+                            .filter(pid -> pid != 0L)
+                            .collect(Collectors.toSet());
+                    menuIdSet.addAll(parentIds);
+
+                    allMenus = allMenus.stream()
+                            .filter(m -> menuIdSet.contains(m.getId()))
+                            .collect(Collectors.toList());
+                }
+            }
+        }
+
+        List<Map<String, Object>> tree = buildTree(allMenus, 0L);
+        return Result.success(tree);
+    }
+
     @PostMapping("/save")
+    @OperationLog(module = "菜单管理", type = "CREATE", content = "保存菜单")
     @ApiOperation("保存/更新菜单")
     public Result<?> save(@RequestBody SysMenu menu) {
         if (menu.getId() == null) {
             menu.setCreateTime(LocalDateTime.now());
             sysMenuMapper.insert(menu);
+            // 新菜单自动分配给超级管理员(role_id=1)
+            try {
+                sysRoleMenuMapper.batchInsert(1L, Collections.singletonList(menu.getId()));
+            } catch (Exception e) {
+                log.warn("自动分配管理员菜单失败: {}", e.getMessage());
+            }
         } else {
             menu.setUpdateTime(LocalDateTime.now());
             sysMenuMapper.updateById(menu);
@@ -50,6 +103,7 @@ public class MenuController {
     }
 
     @DeleteMapping("/{id}")
+    @OperationLog(module = "菜单管理", type = "DELETE", content = "删除菜单")
     @ApiOperation("删除菜单")
     public Result<?> delete(@ApiParam("菜单ID") @PathVariable Long id) {
         sysMenuMapper.deleteById(id);

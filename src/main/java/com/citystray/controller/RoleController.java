@@ -2,6 +2,7 @@ package com.citystray.controller;
 
 import com.citystray.common.PageResult;
 import com.citystray.common.Result;
+import com.citystray.annotation.OperationLog;
 import com.citystray.entity.SysRole;
 import com.citystray.service.RoleService;
 import io.swagger.annotations.Api;
@@ -34,6 +35,7 @@ public class RoleController {
     }
 
     @PostMapping("/save")
+    @OperationLog(module = "角色管理", type = "CREATE", content = "保存角色")
     @ApiOperation("保存/更新角色")
     public Result<?> save(@RequestBody SysRole role) {
         roleService.save(role);
@@ -41,6 +43,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/{id}")
+    @OperationLog(module = "角色管理", type = "DELETE", content = "删除角色")
     @ApiOperation("删除角色")
     public Result<?> delete(@ApiParam("角色ID") @PathVariable Long id) {
         roleService.deleteById(id);
@@ -48,6 +51,7 @@ public class RoleController {
     }
 
     @PutMapping("/{id}/permissions")
+    @OperationLog(module = "角色管理", type = "UPDATE", content = "更新角色权限")
     @ApiOperation("更新角色权限")
     public Result<?> updatePermissions(
             @ApiParam("角色ID") @PathVariable Long id,

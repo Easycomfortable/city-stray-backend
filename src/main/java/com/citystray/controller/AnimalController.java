@@ -3,6 +3,7 @@ package com.citystray.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.citystray.annotation.OperationLog;
 import com.citystray.common.PageResult;
 import com.citystray.common.Result;
 import com.citystray.entity.Animal;
@@ -41,6 +42,7 @@ public class AnimalController {
             @ApiParam("关键词(名字/品种)") @RequestParam(required = false) String keyword,
             @ApiParam("健康状态") @RequestParam(required = false) String status,
             @ApiParam("物种") @RequestParam(required = false) String species,
+            @ApiParam("性别(male/female)") @RequestParam(required = false) String gender,
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer page,
             @ApiParam("每页数量") @RequestParam(defaultValue = "10") Integer pageSize) {
 
@@ -51,7 +53,12 @@ public class AnimalController {
                     .or().like(Animal::getChipNo, keyword));
         }
         if (status != null && !status.isEmpty()) {
-            wrapper.eq(Animal::getHealthStatus, status);
+            if ("rescue".equals(status)) {
+                // "待救助" = treating + recovering
+                wrapper.in(Animal::getHealthStatus, "treating", "recovering");
+            } else {
+                wrapper.eq(Animal::getHealthStatus, status);
+            }
         }
         if (species != null && !species.isEmpty()) {
             if ("cat".equals(species)) {
@@ -63,6 +70,13 @@ public class AnimalController {
                 wrapper.notLike(Animal::getBreed, "猫")
                         .notLike(Animal::getBreed, "犬")
                         .notLike(Animal::getBreed, "狗");
+            }
+        }
+        if (gender != null && !gender.isEmpty()) {
+            if ("male".equals(gender)) {
+                wrapper.eq(Animal::getGender, 1);
+            } else if ("female".equals(gender)) {
+                wrapper.eq(Animal::getGender, 0);
             }
         }
         wrapper.orderByDesc(Animal::getCreateTime);
@@ -91,6 +105,7 @@ public class AnimalController {
     /**
      * 新增动物
      */
+    @OperationLog(module = "动物管理", type = "CREATE", content = "新增动物档案")
     @ApiOperation("新增动物")
     @PostMapping("/save")
     public Result<?> save(@RequestBody Animal animal) {
@@ -101,6 +116,7 @@ public class AnimalController {
     /**
      * 更新动物信息
      */
+    @OperationLog(module = "动物管理", type = "UPDATE", content = "更新动物信息")
     @ApiOperation("更新动物信息")
     @PutMapping("/{id}")
     public Result<?> update(
@@ -114,6 +130,7 @@ public class AnimalController {
     /**
      * 删除动物（逻辑删除）
      */
+    @OperationLog(module = "动物管理", type = "DELETE", content = "删除动物档案")
     @ApiOperation("删除动物")
     @DeleteMapping("/{id}")
     public Result<?> delete(
@@ -189,6 +206,7 @@ public class AnimalController {
     /**
      * 导出动物数据为 Excel
      */
+    @OperationLog(module = "动物管理", type = "EXPORT", content = "导出动物数据")
     @ApiOperation("导出动物数据")
     @GetMapping("/export")
     public void export(HttpServletResponse response) {
@@ -232,6 +250,7 @@ public class AnimalController {
      * 导入动物数据
      * 从Excel文件读取动物信息并批量新增
      */
+    @OperationLog(module = "动物管理", type = "CREATE", content = "批量导入动物数据")
     @ApiOperation("导入动物数据")
     @PostMapping("/import")
     public Result<?> importData(@RequestParam("file") MultipartFile file) {

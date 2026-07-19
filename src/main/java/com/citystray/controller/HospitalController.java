@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.citystray.common.PageResult;
 import com.citystray.common.Result;
+import com.citystray.annotation.OperationLog;
 import com.citystray.entity.Hospital;
 import com.citystray.entity.RescueOrder;
 import com.citystray.mapper.HospitalMapper;
@@ -89,6 +90,7 @@ public class HospitalController {
     /**
      * 新增医院
      */
+    @OperationLog(module = "合作医院", type = "CREATE", content = "新增合作医院")
     @ApiOperation("新增医院")
     @PostMapping("/save")
     public Result<?> save(@RequestBody Hospital hospital) {
@@ -99,6 +101,7 @@ public class HospitalController {
     /**
      * 更新医院信息
      */
+    @OperationLog(module = "合作医院", type = "UPDATE", content = "更新医院信息")
     @ApiOperation("更新医院信息")
     @PutMapping("/{id}")
     public Result<?> update(
@@ -112,6 +115,7 @@ public class HospitalController {
     /**
      * 删除医院（逻辑删除）
      */
+    @OperationLog(module = "合作医院", type = "DELETE", content = "删除合作医院")
     @ApiOperation("删除医院")
     @DeleteMapping("/{id}")
     public Result<?> delete(
@@ -164,6 +168,7 @@ public class HospitalController {
      * 新增/保存医院收费项目
      * 将新项目追加到hospital的price_standard JSON数组中
      */
+    @OperationLog(module = "合作医院", type = "CREATE", content = "新增收费项目")
     @ApiOperation("新增医院收费项目")
     @PostMapping("/item/save")
     public Result<?> saveItem(@RequestBody Map<String, Object> body) {

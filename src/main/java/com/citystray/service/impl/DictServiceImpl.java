@@ -110,7 +110,18 @@ public class DictServiceImpl implements DictService {
                 dictData.setLabel((String) item.get("label"));
                 dictData.setValue(item.get("value") != null ? item.get("value").toString() : "");
                 dictData.setSort(item.get("sort") != null ? Integer.valueOf(item.get("sort").toString()) : 0);
-                dictData.setIsDefault(item.get("isDefault") != null ? Integer.valueOf(item.get("isDefault").toString()) : 0);
+                Object isDefaultVal = item.get("isDefault");
+                int isDefault = 0;
+                if (isDefaultVal instanceof Boolean) {
+                    isDefault = (Boolean) isDefaultVal ? 1 : 0;
+                } else if (isDefaultVal != null) {
+                    try {
+                        isDefault = Integer.parseInt(isDefaultVal.toString());
+                    } catch (NumberFormatException e) {
+                        isDefault = 0;
+                    }
+                }
+                dictData.setIsDefault(isDefault);
                 dictData.setCreateTime(LocalDateTime.now());
                 sysDictDataMapper.insert(dictData);
             }
@@ -127,5 +138,31 @@ public class DictServiceImpl implements DictService {
         LambdaQueryWrapper<SysDictData> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysDictData::getDictTypeId, id);
         sysDictDataMapper.delete(wrapper);
+    }
+
+    @Override
+    public List<Map<String, Object>> getItemsByCode(String code) {
+        // 根据编码查找字典类型
+        LambdaQueryWrapper<SysDictType> typeWrapper = new LambdaQueryWrapper<>();
+        typeWrapper.eq(SysDictType::getCode, code);
+        SysDictType type = sysDictTypeMapper.selectOne(typeWrapper);
+        if (type == null) return Collections.emptyList();
+
+        // 查询该类型下的字典数据项
+        LambdaQueryWrapper<SysDictData> dataWrapper = new LambdaQueryWrapper<>();
+        dataWrapper.eq(SysDictData::getDictTypeId, type.getId());
+        dataWrapper.orderByAsc(SysDictData::getSort);
+        List<SysDictData> dataList = sysDictDataMapper.selectList(dataWrapper);
+
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (SysDictData data : dataList) {
+            Map<String, Object> item = new LinkedHashMap<>();
+            item.put("label", data.getLabel());
+            item.put("value", data.getValue());
+            item.put("sort", data.getSort());
+            item.put("isDefault", data.getIsDefault());
+            items.add(item);
+        }
+        return items;
     }
 }
